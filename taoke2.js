@@ -9,7 +9,7 @@
 // @require      https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js
 // ==/UserScript==
 
-
+let tbkRushItemUrl = 'http://tbk.huaqiweb.com/tbk/assistant/tbkRushItem'
 function request(arr) {
     let errorary = []
     console.log('我应该请求',arr.length,'次')
@@ -47,7 +47,7 @@ function saveGoodsList(data){
     let temp = {data:data,msg:'saveGoodsList'}
     temp = JSON.stringify(temp)
     $.ajax({
-        url:'http://admin.api.huaqiweb.com/mock/51/tbk/assistant/tbkRushItem',
+        url:tbkRushItemUrl,
         type:'post',
         contentType:'application/json',
         async: false,
@@ -79,6 +79,9 @@ function init() {
     let goodsList = dataDef
     let data = []
     for(key in goodsList){
+        // if(key != '1417'){
+        //     continue
+        // }
         goodsList[key].forEach((item) => {
             let flag = localStorage.getItem(`id_md5_${item.id}`)
             if(flag!=md5(JSON.stringify(item))){
