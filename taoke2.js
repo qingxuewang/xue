@@ -12,14 +12,10 @@
 
 function request(arr) {
     let errorary = [];
-    let id_numidArry = JSON.parse(localStorage.getItem('id_numidArry'))?JSON.parse(localStorage.getItem('id_numidArry')):[];
-    console.log(id_numidArry,'我是id_numidArry')
     console.log('我应该请求',arr.length,'次')
     arr.forEach((item)=>{
         let url = `http://www.dataoke.com/item?id=${item.id}`;
-        let flag = id_numidArry.find((e)=>{
-            return e.id == item.id;
-        });
+        let flag = localStorage.getItem(`id_numid_${item.id}`)
         // 找到则不需要再次请求numid
         if(flag){
             console.log('无需请求numid，已经存在numid');
@@ -30,7 +26,7 @@ function request(arr) {
                 success: function (responseText) {
                     try {
                         item.numid = responseText.match(/item\.htm\?id=([0-9]+)/)[1];
-                        id_numidArry.push({id:item.id,numid:item.numid})
+                        localStorage.setItem(`id_numid_${item.id}`,item.numid)
                     } catch (error) {
                         errorary.push(item);
                     }
@@ -40,7 +36,6 @@ function request(arr) {
     })
     if(errorary.length==0){
         console.log('请求结束');
-        localStorage.setItem('id_numidArry',JSON.stringify(id_numidArry));
     }else{
         request(errorary);
     }
@@ -67,24 +62,17 @@ function init() {
     'use strict';
     let goodsList = dataDef;
     let data = [];
-    let md5Arry = JSON.parse(localStorage.getItem('md5'))?JSON.parse(localStorage.getItem('md5')):[];
     for(key in goodsList){
         goodsList[key].forEach((item) => {
-            let flag = md5Arry.find((e)=>{
-               return e.md5id == md5(JSON.stringify(item))
-            });
+            let flag = localStorage.getItem(`id_md5_${item.id}`)
             console.log(flag)
-            // 成立则已经发送使用过该数据
-            if(!flag){
+            if(flag!=md5(JSON.stringify(item))){
+                console.log('需存储md5')
                 data.push(item);
-                md5Arry.push({id:item.id,md5id:md5(JSON.stringify(item))})
-                localStorage.setItem('id')
+                localStorage.setItem(`id_md5_${item.id}`,md5(JSON.stringify(item)))
             }
         });
     }
-    localStorage.setItem('md5',JSON.stringify(md5Arry));
-    console.log(md5Arry,'md5Arry');
-    console.log(md5Arry.length,'md5Arry.length');
     console.log(data,'data');
     console.log(data.length,'data.length');
     if(data.length>0){
